@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Classroom Adventure</title>
+
+<style>
+:root {
+  --purple:#7967d9;
+  --pink:#ff83b5;
+  --blue:#77c9f2;
+  --green:#76d5ad;
+  --yellow:#ffd76d;
+  --ink:#37415f;
+  --paper:#ffffff;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0;
+  font-family:"Trebuchet MS",Arial,sans-serif;
+  color:var(--ink);
+  background:linear-gradient(140deg,#fff4fa,#eef9ff,#f7fff0);
+  min-height:100vh;
+}
+button { font:inherit; cursor:pointer; border:0; }
+header {
+  display:flex; justify-content:space-between; align-items:center;
+  gap:12px; flex-wrap:wrap; padding:15px 4%;
+  background:#ffffffd9; border-bottom:3px solid #e8e3ff;
+  position:sticky; top:0; z-index:5;
+}
+.brand { font-size:clamp(20px,3vw,30px); color:var(--purple); font-weight:900; }
+.brand small { display:block; color:#8b8ca6; font-size:12px; text-align:center; }
+.stars {
+  background:#fff0b8; padding:10px 16px; border-radius:25px;
+  font-weight:bold; color:#8d6a19;
+}
+.screen { display:none; max-width:1200px; margin:auto; padding:24px 18px 45px; }
+.screen.active { display:block; animation:appear .4s ease; }
+@keyframes appear { from {opacity:0; transform:translateY(8px)} to {opacity:1;transform:none} }
+h1,h2,h3 { margin-top:8px; }
+h1 { color:var(--purple); font-size:clamp(30px,5vw,48px); }
+h2 { color:var(--purple); }
+p { line-height:1.6; }
+.ar { direction:rtl; color:#d45d98; font-size:17px; }
+.btn {
+  background:var(--purple); color:white; padding:13px 22px;
+  border-radius:18px; box-shadow:0 5px 0 #5847b5;
+  margin:5px; font-weight:bold; transition:.2s;
+}
+.btn:hover { transform:translateY(-3px); }
+.btn.pink { background:var(--pink); box-shadow:0 5px 0 #db6095; }
+.btn.green { background:#42b990; box-shadow:0 5px 0 #268d6d; }
+.btn.blue { background:#50afe0; box-shadow:0 5px 0 #328cba; }
+.btn.yellow { background:#f3b64f; box-shadow:0 5px 0 #cb8a2c; color:#533b19; }
+.center { text-align:center; }
+.panel {
+  background:white; border:2px solid #e9e5ff; border-radius:25px;
+  padding:22px; box-shadow:0 10px 30px #7064aa12;
+}
+.welcome-layout {
+  display:grid; grid-template-columns:1fr 1fr; gap:22px; align-items:center;
+}
+.welcome-art {
+  min-height:350px; border-radius:35px; padding:25px;
+  background:linear-gradient(#c6efff 0 60%,#b8e8bb 60%);
+  position:relative; overflow:hidden; border:5px solid white;
+}
+.sun {
+  position:absolute; right:30px; top:22px; font-size:52px;
+  animation:float 3s infinite ease-in-out;
+}
+.teacher-big { font-size:115px; animation:float 2.4s infinite ease-in-out; }
+@keyframes float { 50% {transform:translateY(-9px) rotate(2deg)} }
+.chalkboard {
+  background:#3b9c83; color:white; padding:18px;
+  border:9px solid #d79b5d; border-radius:12px;
+  max-width:270px; margin:15px auto; font-size:20px;
+  transform:rotate(-2deg);
+}
+.level-grid {
+  display:grid; grid-template-columns:repeat(3,1fr);
+  gap:18px; margin:25px 0;
+}
+.level-card {
+  background:white; padding:24px 16px; border-radius:25px;
+  border:3px solid #eee9ff; box-shadow:0 9px 20px #6553aa12;
+  transition:.2s;
+}
+.level-card:hover { transform:translateY(-6px); }
+.level-icon { font-size:60px; }
+.level-card:nth-child(2) { border-color:#d8f6e7; }
+.level-card:nth-child(3) { border-color:#ffe2ee; }
+.lesson-layout {
+  display:grid; grid-template-columns:minmax(0,2fr) minmax(230px,1fr);
+  gap:18px; align-items:start;
+}
+.classroom {
+  position:relative; min-height:440px; overflow:hidden;
+  border:6px solid white; border-radius:28px;
+  background:linear-gradient(#bceaff 0 57%,#f6d9a6 57% 61%,#f3d5f0 61%);
+  box-shadow:0 12px 30px #6d83a522;
+}
+.wall-decor { position:absolute; left:3%; top:4%; font-size:27px; }
+.window {
+  position:absolute; right:4%; top:8%; width:21%; height:28%;
+  background:#a8e8ff; border:8px solid #d99b5e;
+  box-shadow:inset 0 0 0 3px white;
+}
+.window:before { content:""; position:absolute; left:48%; height:100%; width:5px; background:white; }
+.window:after { content:""; position:absolute; top:48%; width:100%; height:5px; background:white; }
+.door {
+  position:absolute; right:28%; top:22%; width:13%; height:35%;
+  background:#d7a36a; border:7px solid #b87b46; border-radius:4px 4px 0 0;
+}
+.door:after { content:""; position:absolute; right:9px; top:52%; width:8px; height:8px; border-radius:50%; background:#ffed9a; }
+.board {
+  position:absolute; left:23%; top:12%; width:43%; height:29%;
+  background:#258d75; border:9px solid #d89a59; border-radius:5px;
+  display:flex; align-items:center; justify-content:center;
+  color:white; font-size:clamp(14px,2vw,23px); font-weight:bold;
+  text-align:center; transition:.3s;
+}
+.board.point { outline:5px solid #ffdf70; box-shadow:0 0 25px #ffdf70; }
+.teacher-scene {
+  position:absolute; left:1%; bottom:2%; width:29%;
+  text-align:center; z-index:2;
+}
+.teacher-scene .face { font-size:clamp(55px,9vw,95px); display:block; }
+.teacher-scene .body { font-size:clamp(48px,7vw,75px); display:block; margin-top:-14px; }
+.teacher-scene .arm { display:inline-block; font-size:30px; animation:point 1.2s infinite; }
+@keyframes point { 50% {transform:rotate(-20deg) translateX(8px)} }
+.desk-object {
+  position:absolute; bottom:15%; left:43%; width:27%; height:13%;
+  background:#edb75e; border:5px solid #c48a43; border-radius:7px;
+}
+.desk-object:after {
+  content:""; position:absolute; left:10%; right:10%; top:100%;
+  height:35px; background:linear-gradient(90deg,#9c7047 15%,transparent 15% 80%,#9c7047 80%);
+}
+.chair-object {
+  position:absolute; bottom:10%; right:12%; width:13%; height:15%;
+  background:#65b8ee; border:5px solid #398fca; border-radius:8px;
+}
+.chair-object:after {
+  content:""; position:absolute; left:10%; right:10%; top:100%;
+  height:35px; border-left:6px solid #398fca; border-right:6px solid #398fca;
+}
+.lesson-caption {
+  background:#ffffffef; border-radius:18px; padding:15px;
+  margin-top:14px; min-height:90px; text-align:center;
+}
+.lesson-caption .english { font-size:24px; font-weight:bold; color:#5545b4; }
+.lesson-caption .arabic { font-size:19px; direction:rtl; color:#d45d98; margin-top:6px; }
+.lesson-list { display:flex; flex-direction:column; gap:8px; }
+.lesson-row {
+  display:flex; align-items:center; gap:10px; text-align:left;
+  background:#fff; border:2px solid #ece8ff; padding:12px;
+  border-radius:15px; color:var(--ink);
+}
+.lesson-row.active { background:#eee9ff; border-color:var(--purple); }
+.lesson-row .mini { font-size:28px; }
+.lesson-row small { display:block; direction:rtl; color:#cf6395; margin-top:4px; }
+.progress { height:12px; background:#e9e5f6; border-radius:20px; overflow:hidden; margin:15px 0; }
+.progress div { height:100%; background:linear-gradient(90deg,#ff83b5,#8d7be8); width:0%; transition:.3s; }
+.controls { display:flex; flex-wrap:wrap; justify-content:center; gap:5px; margin-top:15px; }
+.toy-grid {
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
+  gap:12px; margin:22px 0;
+}
+.toy {
+  background:#fff; border:3px solid #e9e4ff; border-radius:20px;
+  padding:16px 8px; font-size:18px; text-align:center;
+}
+.toy .emoji { font-size:42px; }
+.toy[draggable="true"] { cursor:grab; }
+.toy.dragging { opacity:.45; }
+.room-build {
+  position:relative; background:linear-gradient(#c7efff 0 65%,#f2d7ad 65%);
+  border:6px solid white; border-radius:25px; min-height:310px;
+  overflow:hidden; padding:20px;
+}
+.build-board { background:#268e75; border:8px solid #d69a5a; color:white; padding:15px; width:48%; margin:10px auto; }
+.drop-zone {
+  display:inline-flex; vertical-align:middle; align-items:center; justify-content:center;
+  min-width:95px; min-height:75px; padding:8px; margin:7px;
+  border:3px dashed #9e8ce5; border-radius:18px; background:#ffffffbb;
+  font-size:30px;
+}
+.drop-zone.over { background:#fff1b9; border-color:#e8ad36; }
+.drop-zone.done { background:#d9f9e7; border-style:solid; }
+.match-layout {
+  display:grid; grid-template-columns:1fr 1fr; gap:20px; max-width:800px; margin:25px auto;
+}
+.match-card {
+  background:white; border:3px solid #e9e4ff; border-radius:18px;
+  padding:18px 10px; font-size:19px; min-height:75px;
+}
+.match-card.selected { background:#fff1c9; border-color:#f0b747; }
+.match-card.done { background:#dff9eb; border-color:#56c58c; }
+.big-emoji { font-size:55px; }
+.message {
+  background:white; border:2px solid #eee7ff; border-radius:20px;
+  padding:15px; margin:15px auto; max-width:650px; min-height:55px;
+}
+#certificate {
+  max-width:700px; margin:25px auto; padding:30px;
+  background:#fffdf1; border:9px double #e4bb61; border-radius:20px;
+}
+#certificate h2 { color:#b98b2f; }
+input {
+  padding:12px; border:2px solid #ddd4fa; border-radius:12px;
+  font:inherit; max-width:100%;
+}
+footer { text-align:center; padding:25px; color:#9996ad; }
+@media(max-width:760px) {
+  .welcome-layout,.lesson-layout { grid-template-columns:1fr; }
+  .level-grid { grid-template-columns:1fr; }
+  .classroom { min-height:370px; }
+  .match-layout { gap:8px; }
+  .match-card { font-size:15px; }
+}
+@media print {
+  body * { visibility:hidden; }
+  #certificate,#certificate * { visibility:visible; }
+  #certificate { position:absolute; top:0; left:0; width:100%; box-shadow:none; }
+}
+</style>
+</head>
+
+<body>
+<header>
+  <div class="brand">⭐ My Classroom Adventure ⭐
+    <small>Learn • Play • Grow</small>
+  </div>
+  <div class="stars">🌟 Stars: <span id="totalStars">0</span></div>
+</header>
+
+<!-- HOME -->
+<section id="home" class="screen active">
+  <div class="welcome-layout">
+    <div class="welcome-art center">
+      <div class="sun">☀️</div>
+      <div class="teacher-big">👩🏻‍🏫</div>
+      <div class="chalkboard">Welcome to<br>our Classroom! 💗</div>
+      <div style="font-size:32px">📚 🪑 🎒 ✏️</div>
+    </div>
+    <div class="panel center">
+      <h1>Hello, Little Learner! 🌈</h1>
+      <p>Come and explore our colorful classroom with Miss Lily!</p>
+      <p class="ar">يلا نستكشف فصلنا الجميل مع ميس ليلي ونتعلم أسماء الحاجات بالإنجليزي!</p>
+      <button class="btn pink" onclick="openLevels()">Let's Start! 🚀</button>
+    </div>
+  </div>
+</section>
+
+<!-- LEVEL MENU -->
+<section id="levels" class="screen center">
+  <h1>Choose Your Adventure! 🌟</h1>
+  <p class="ar">اختار مغامرتك، ويلا نلعب ونتعلم!</p>
+  <div class="level-grid">
+    <div class="level-card">
+      <div class="level-icon">🎬</div><h2>Level 1</h2>
+      <h3>Watch & Learn</h3>
+      <p>Meet Miss Lily and learn the words.</p>
+      <p class="ar">اتفرج واتعلم مع المعلمة</p>
+      <button class="btn blue" onclick="startLesson()">Start Lesson</button>
+    </div>
+    <div class="level-card">
+      <div class="level-icon">🧩</div><h2>Level 2</h2>
+      <h3>Build Your Classroom</h3>
+      <p>Drag objects to their places.</p>
+      <p class="ar">كوّن فصلك بنفسك</p>
+      <button class="btn green" onclick="startBuild()">Let's Build</button>
+    </div>
+    <div class="level-card">
+      <div class="level-icon">⭐</div><h2>Level 3</h2>
+      <h3>Play & Remember</h3>
+      <p>Match pictures and words.</p>
+      <p class="ar">وصّل الصورة بالكلمة</p>
+      <button class="btn pink" onclick="startMatch()">Let's Play</button>
+    </div>
+  </div>
+</section>
+
+<!-- LEVEL 1 -->
+<section id="lesson" class="screen">
+  <div class="center">
+    <h1>🎬 Watch & Learn</h1>
+    <p class="ar">اسمع ميس ليلي وهي بتشرح أسماء أدوات الفصل.</p>
+  </div>
+  <div class="lesson-layout">
+    <div>
+      <div class="classroom">
+        <div class="wall-decor">🌈 📚</div>
+        <div class="window" id="windowObj"></div>
+        <div class="door" id="doorObj"></div>
+        <div class="board" id="boardObj">Welcome! 💗</div>
+        <div class="desk-object" id="deskObj"></div>
+        <div class="chair-object" id="chairObj"></div>
+        <div class="teacher-scene">
+          <span class="face" id="teacherFace">👩🏻‍🏫</span>
+          <span class="body">👗</span>
+          <span class="arm" id="teacherArm">👉</span>
+        </div>
+      </div>
+      <div class="lesson-caption">
+        <div class="english" id="lessonEnglish">Hello, everyone!</div>
+        <div class="arabic" id="lessonArabic">أهلًا يا أبطال!</div>
+      </div>
+      <div class="progress"><div id="lessonProgress"></div></div>
+      <div class="controls">
+        <button class="btn blue" onclick="previousLesson()">⬅ Back</button>
+        <button class="btn pink" onclick="repeatLesson()">🔊 Listen Again</button>
+        <button class="btn green" onclick="nextLesson()">Next ➜</button>
+      </div>
+    </div>
+    <div class="panel">
+      <h2>📚 Lesson Steps</h2>
+      <div class="lesson-list" id="lessonList"></div>
+      <div class="message center" id="lessonMessage">Let's learn together! 💕</div>
+      <button class="btn" onclick="openLevels()">All Levels</button>
+    </div>
+  </div>
+</section>
+
+<!-- LEVEL 2 -->
+<section id="build" class="screen center">
+  <h1>🧩 Build Your Classroom!</h1>
+  <p>Drag each object to the matching place.</p>
+  <p class="ar">اسحب كل حاجة وحطها في المكان اللي يناسبها في الفصل.</p>
+  <div class="panel">
+    <div class="room-build">
+      <div class="build-board">BOARD</div>
+      <div>
+        <span class="drop-zone" data-item="door">🚪</span>
+        <span class="drop-zone" data-item="window">🪟</span>
+      </div>
+      <div>
+        <span class="drop-zone" data-item="desk">🟨</span>
+        <span class="drop-zone" data-item="chair">🪑</span>
+        <span class="drop-zone" data-item="bag">🎒</span>
+      </div>
+    </div>
+    <h2>Choose an object and drag it to its place! 🎈</h2>
+    <div id="toyGrid" class="toy-grid"></div>
+    <div class="message" id="buildMessage">You can do it, little builder! 💪</div>
+    <p id="buildCount">Completed: 0 / 5</p>
+    <button class="btn pink" onclick="openLevels()">⬅ Levels</button>
+    <button class="btn green" onclick="startMatch()">Next Level ➜</button>
+  </div>
+</section>
+
+<!-- LEVEL 3 -->
+<section id="match" class="screen center">
+  <h1>⭐ Play & Remember</h1>
+  <p>Match each English word with its picture!</p>
+  <p class="ar">وصّل كل كلمة بالصورة المناسبة ليها.</p>
+  <div class="progress"><div id="matchProgress"></div></div>
+  <div class="match-layout">
+    <div id="wordColumn"></div>
+    <div id="pictureColumn"></div>
+  </div>
+  <div class="message" id="matchMessage">Tap a word, then tap its picture! ✨</div>
+  <button class="btn pink" onclick="openLevels()">⬅ Levels</button>
+  <button class="btn green" onclick="showCertificate()">Finish 🏆</button>
+</section>
+
+<!-- CERTIFICATE -->
+<section id="certificateScreen" class="screen center">
+  <div id="certificate">
+    <div style="font-size:65px">🏆🌈⭐</div>
+    <h2>Certificate of Achievement</h2>
+    <p>You are a Classroom Superstar!</p>
+    <p class="ar">شهادة تقدير لبطل الفصل الصغير</p>
+    <input id="childName" placeholder="Write your name here">
+    <p id="printedName" style="font-size:28px;color:#7967d9;font-weight:bold"></p>
+    <p>has completed</p>
+    <h2>My Classroom Adventure</h2>
+    <p class="ar">أتم مغامرة تعلم أسماء أدوات الفصل بنجاح</p>
+    <div style="font-size:38px">⭐ ⭐ ⭐ ⭐ ⭐</div>
+    <p>Keep learning and shining! ✨</p>
+  </div>
+  <button class="btn pink" onclick="makeCertificate()">Create Certificate</button>
+  <button class="btn blue" onclick="window.print()">🖨 Print</button>
+  <button class="btn green" onclick="openLevels()">Play Again 🔄</button>
+</section>
+
+<footer>Made with love for little learners 💗</footer>
+
+<script>
+const $ = id => document.getElementById(id);
+
+const lessonData = [
+  {en:"Hello, everyone!", ar:"أهلًا يا أبطال!", say:"Hello everyone! Welcome to our classroom.", arabic:"أهلًا يا أبطال! نورتوا فصلنا الجميل.", target:"boardObj", label:"👩🏻‍🏫 Welcome"},
+  {en:"This is a board.", ar:"هذه سبورة.", say:"This is a board.", arabic:"دي سبورة. بنكتب عليها في الفصل.", target:"boardObj", label:"🟩 Board"},
+  {en:"This is a door.", ar:"هذا باب.", say:"This is a door.", arabic:"ده باب. بندخل ونخرج منه.", target:"doorObj", label:"🚪 Door"},
+  {en:"This is a window.", ar:"هذه نافذة.", say:"This is a window.", arabic:"ده شباك. بنشوف منه بره الفصل.", target:"windowObj", label:"🪟 Window"},
+  {en:"This is a desk.", ar:"هذا مقعد دراسي.", say:"This is a desk.", arabic:"ده ديسك، بنحط عليه كتبنا ونكتب عليه.", target:"deskObj", label:"🟨 Desk"},
+  {en:"This is a chair.", ar:"هذا كرسي.", say:"This is a chair.", arabic:"ده كرسي، بنقعد عليه.", target:"chairObj", label:"🪑 Chair"}
+];
+
+let lessonIndex = 0;
+let stars = 0;
+let completedBuild = new Set();
+let selectedWord = null;
+let matched = new Set();
+let matchPairs = [];
+
+function showScreen(id) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  $(id).classList.add("active");
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function openLevels(){ showScreen("levels"); }
+function addStars(n=1) {
+  stars += n;
+  $("totalStars").textContent = stars;
+}
+function tone(freq=650,duration=.13) {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.type="sine"; osc.frequency.value=freq;
+    gain.gain.setValueAtTime(.07,ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+duration);
+    osc.start(); osc.stop(ctx.currentTime+duration);
+    osc.onended=()=>ctx.close();
+  } catch(e) {}
+}
+
+// Speak English, then Arabic using available browser voices
+function speak(en,ar) {
+  if (!("speechSynthesis" in window)) {
+    return;
+  }
+  speechSynthesis.cancel();
+  const english = new SpeechSynthesisUtterance(en);
+  english.lang="en-US";
+  english.rate=.82;
+  english.pitch=1.05;
+  english.onend=()=>{
+    const arabic = new SpeechSynthesisUtterance(ar);
+    arabic.lang="ar-EG";
+    arabic.rate=.88;
+    speechSynthesis.speak(arabic);
+  };
+  speechSynthesis.speak(english);
+}
+
+function buildLessonList() {
+  $("lessonList").innerHTML="";
+  lessonData.forEach((item,i)=>{
+    const button=document.createElement("button");
+    button.className="lesson-row";
+    button.innerHTML=`<span class="mini">${item.label.split(" ")[0]}</span>
+      <span>${i+1}. ${item.en}<small>${item.ar}</small></span>`;
+    button.onclick=()=>{lessonIndex=i;renderLesson(true);};
+    $("lessonList").appendChild(button);
+  });
+}
+function renderLesson(playVoice=false) {
+  const item=lessonData[lessonIndex];
+  $("lessonEnglish").textContent=item.en;
+  $("lessonArabic").textContent=item.ar;
+  $("lessonProgress").style.width=((lessonIndex+1)/lessonData.length*100)+"%";
+  $("lessonMessage").textContent="Lesson "+(lessonIndex+1)+" of "+lessonData.length;
+  document.querySelectorAll(".lesson-row").forEach((b,i)=>{
+    b.classList.toggle("active",i===lessonIndex);
+  });
+  document.querySelectorAll(".board,.door,.window,.desk-object,.chair-object")
+    .forEach(el=>el.classList.remove("point"));
+  if(item.target) $(item.target).classList.add("point");
+  $("teacherArm").textContent=lessonIndex===0?"👋":"👉";
+  $("teacherFace").style.transform=lessonIndex%2?"rotate(-4deg)":"rotate(4deg)";
+  if(playVoice) speak(item.say,item.arabic);
+}
+function startLesson(){
+  lessonIndex=0; buildLessonList(); showScreen("lesson"); renderLesson(true);
+}
+function nextLesson(){
+  if(lessonIndex<lessonData.length-1){
+    lessonIndex++; addStars(); renderLesson(true); tone(750);
+  } else {
+    $("lessonMessage").textContent="Amazing! You finished the lesson! 🌟";
+    speak("Amazing! You finished the lesson!","برافو عليك! خلصت الدرس!");
+    addStars(2);
+  }
+}
+function previousLesson(){
+  if(lessonIndex>0){ lessonIndex--; renderLesson(true); }
+}
+function repeatLesson(){
+  const item=lessonData[lessonIndex];
+  speak(item.say,item.arabic);
+}
+
+// LEVEL 2: drag objects into matching places
+const buildItems=[
+  {id:"door",en:"Door",emoji:"🚪"},
+  {id:"window",en:"Window",emoji:"🪟"},
+  {id:"desk",en:"Desk",emoji:"🟨"},
+  {id:"chair",en:"Chair",emoji:"🪑"},
+  {id:"bag",en:"Bag",emoji:"🎒"}
+];
+function startBuild(){
+  completedBuild=new Set();
+  showScreen("build");
+  $("buildMessage").textContent="Drag each object to the matching place!";
+  $("buildCount").textContent="Completed: 0 / 5";
+  document.querySelectorAll(".drop-zone").forEach(zone=>{
+    zone.classList.remove("done");
+    zone.ondragover=e=>{e.preventDefault();zone.classList.add("over");};
+    zone.ondragleave=()=>zone.classList.remove("over");
+    zone.ondrop=e=>{
+      e.preventDefault();zone.classList.remove("over");
+      const id=e.dataTransfer.getData("text/plain");
+      if(id!==zone.dataset.item || completedBuild.has(id)){
+        $("buildMessage").textContent="Almost! Try the matching place. 💗";
+        tone(280); return;
+      }
+      completedBuild.add(id);
+      zone.classList.add("done");
+      const item=buildItems.find(x=>x.id===id);
+      zone.textContent=item.emoji;
+      const toy=document.querySelector('[data-toy="'+id+'"]');
+      if(toy) toy.style.opacity=".35";
+      addStars(); tone(850);
+      $("buildCount").textContent="Completed: "+completedBuild.size+" / 5";
+      $("buildMessage").textContent="Great job! "+item.en+" is in its place! 🎉";
+      speak("Great job! "+item.en+" is in its place!","برافو عليك! حطيت "+item.en+" في مكانه الصح!");
+      if(completedBuild.size===5){
+        $("buildMessage").textContent="You built your classroom! Amazing! 🏆";
+        addStars(3);
+        speak("You built your classroom! Amazing!","برافو! بنيت فصلك بنفسك!");
+      }
+    };
+  });
+  const grid=$("toyGrid"); grid.innerHTML="";
+  [...buildItems].sort(()=>Math.random()-.5).forEach(item=>{
+    const toy=document.createElement("div");
+    toy.className="toy"; toy.draggable=true;
+    toy.dataset.toy=item.id;
+    toy.innerHTML=`<div class="emoji">${item.emoji}</div><b>${item.en}</b>`;
+    toy.ondragstart=e=>{e.dataTransfer.setData("text/plain",item.id);};
+    grid.appendChild(toy);
+  });
+}
+
+// LEVEL 3: tap word then matching picture
+const matchData=[
+  {en:"Board",ar:"سبورة",emoji:"🟩"},
+  {en:"Door",ar:"باب",emoji:"🚪"},
+  {en:"Window",ar:"شباك",emoji:"🪟"},
+  {en:"Desk",ar:"ديسك",emoji:"🟨"},
+  {en:"Chair",ar:"كرسي",emoji:"🪑"},
+  {en:"Bag",ar:"شنطة",emoji:"🎒"}
+];
+function startMatch(){
+  showScreen("match");
+  selectedWord=null; matched=new Set();
+  matchPairs=[...matchData].sort(()=>Math.random()-.5);
+  const shuffledPics=[...matchData].sort(()=>Math.random()-.5);
+  $("wordColumn").innerHTML="";
+  $("pictureColumn").innerHTML="";
+  matchData.forEach(item=>{
+    const b=document.createElement("button");
+    b.className="match-card";
+    b.textContent=item.en;
+    b.onclick=()=>{
+      if(matched.has(item.en))return;
+      selectedWord=item.en;
+      document.querySelectorAll("#wordColumn button").forEach(x=>x.classList.remove("selected"));
+      b.classList.add("selected");
+      speak(item.en,item.ar);
+    };
+    b.dataset.word=item.en;
+    $("wordColumn").appendChild(b);
+  });
+  shuffledPics.forEach(item=>{
+    const b=document.createElement("button");
+    b.className="match-card";
+    b.innerHTML=`<span class="big-emoji">${item.emoji}</span><br><small>?</small>`;
+    b.onclick=()=>{
+      if(!selectedWord || matched.has(item.en))return;
+      if(selectedWord===item.en){
+        matched.add(item.en);
+        document.querySelector('[data-word="'+item.en+'"]').classList.add("done");
+        b.classList.add("done"); b.innerHTML=`<span class="big-emoji">${item.emoji}</span><br>${item.en} ✓`;
+        $("matchMessage").textContent="Correct! "+item.en+"! 🌟";
+        addStars(); tone(880);
+        speak("Correct! This is a "+item.en+".","إجابة صحيحة! دي "+item.ar+".");
+        $("matchProgress").style.width=(matched.size/matchData.length*100)+"%";
+        if(matched.size===matchData.length){
+          $("matchMessage").textContent="Wonderful! You matched every picture! 🏆";
+          addStars(3);
+          speak("Wonderful! You matched every picture!","رائع! وصلت كل الصور صح!");
+        }
+      } else {
+        $("matchMessage").textContent="Try again! You can do it! 💪";
+        tone(300);
+      }
+      selectedWord=null;
+      document.querySelectorAll("#wordColumn button").forEach(x=>x.classList.remove("selected"));
+    };
+    $("pictureColumn").appendChild(b);
+  });
+  $("matchProgress").style.width="0%";
+  $("matchMessage").textContent="Tap a word, then tap its picture! ✨";
+}
+function showCertificate(){showScreen("certificateScreen");}
+function makeCertificate(){
+  const name=$("childName").value.trim();
+  if(!name){alert("Write your name first! اكتب اسمك الأول يا بطل!");return;}
+  $("printedName").textContent=name;
+  tone(900,.25);
+}
+</script>
+</body>
+</html>
